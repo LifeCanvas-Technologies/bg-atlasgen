@@ -152,23 +152,23 @@ def wrapup_atlas_from_data(
         save_secondary_reference(stack, k, output_dir=dest_dir)
 
     # Reorient vertices of the mesh.
-    mesh_dest_dir = dest_dir / descriptors.MESHES_DIRNAME
-    mesh_dest_dir.mkdir()
+    # mesh_dest_dir = dest_dir / descriptors.MESHES_DIRNAME
+    # mesh_dest_dir.mkdir()
 
-    for mesh_id, meshfile in meshes_dict.items():
-        mesh = mio.read(meshfile)
+    # for mesh_id, meshfile in meshes_dict.items():
+    #     mesh = mio.read(meshfile)
 
-        # Reorient points:
-        mesh.points = space_convention.map_points_to(
-            descriptors.ATLAS_ORIENTATION, mesh.points
-        )
+    #     # Reorient points:
+    #     mesh.points = space_convention.map_points_to(
+    #         descriptors.ATLAS_ORIENTATION, mesh.points
+    #     )
 
-        # Scale the mesh to be in microns, if necessary:
-        if scale_meshes:
-            mesh.points *= resolution
+    #     # Scale the mesh to be in microns, if necessary:
+    #     if scale_meshes:
+    #         mesh.points *= resolution
 
-        # Save in meshes dir:
-        mio.write(mesh_dest_dir / f"{mesh_id}.obj", mesh)
+    #     # Save in meshes dir:
+    #     mio.write(mesh_dest_dir / f"{mesh_id}.obj", mesh)
 
     transformation_mat = space_convention.transformation_matrix_to(
         descriptors.ATLAS_ORIENTATION
