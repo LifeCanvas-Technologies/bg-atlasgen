@@ -11,6 +11,7 @@ from tqdm import tqdm
 import multiprocessing as mp
 from functools import partial
 from treelib import Tree
+import os, shutil
 
 def get_struct_path(df, structure_id_path):
     """
@@ -58,7 +59,7 @@ def create_tree(struct_list):
     return tree
 
 def create_atlas(working_dir, resolution, template_path, annotation_path, 
-                 structure_path, meshes_path, num_workers=None):
+                 structure_path):
     """Function to generate source data for an atlas.
 
     Parameters
@@ -79,16 +80,22 @@ def create_atlas(working_dir, resolution, template_path, annotation_path,
     SPECIES = "Mus musculus"
     ATLAS_LINK = "https://lifecanvastech.com"
     CITATION = "unpublished"
-    ORIENTATION = "sal"
+    ORIENTATION = "sal" #sal = transverse orientation 
+    
+    if os.path.exists(working_dir):
+        shutil.rmtree(working_dir)
+        
+    os.makedirs(working_dir)
 
 
     # do stuff to create the atlas
-    template_volume = tifffile.imread(template_path)  # volume with reference
+    # bg_atlasgen produces images 
+    template_volume = tifffile.imread(template_path)  # volume with reference (read in as z,y,x)
     annotated_volume = tifffile.imread(annotation_path)  # volume with structures annotations
     structures_list = get_structures_list(structure_path, 20000)  # list of valid structure dictionaries
     root_id = -1 # id of the root structure
     
-    # mesh creation
+    # mesh creation -- takes too long and produces huge files
     # pth = Path(meshes_path)
     # tree = create_tree(structures_list)
     # labels = list(np.unique(annotated_volume))
@@ -135,11 +142,10 @@ def create_atlas(working_dir, resolution, template_path, annotation_path,
 if __name__ == "__main__":
     resolution = 10  # some resolution, in microns
     template_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/NeuN647_10_full_transverse_histnormalized.tiff'
-    annotation_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/edge_autofluorescence_10_full_transverse.tiff'
+    annotation_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/edge_annotation_10_full_transverse_LR.tiff'
     structure_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/full_brain_regions_LR.csv'
     
     # Generated atlas path:
     bg_root_dir = "/home/user/Documents/brainreg_tests/atlases"
-    meshes_path = "/home/user/Documents/brainreg_tests/atlas_mesh" # doesn't matter
 
-    create_atlas(bg_root_dir, resolution, template_path, annotation_path, structure_path, meshes_path)
+    create_atlas(bg_root_dir, resolution, template_path, annotation_path, structure_path)
