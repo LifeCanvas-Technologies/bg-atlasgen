@@ -11,7 +11,7 @@ from tqdm import tqdm
 import multiprocessing as mp
 from functools import partial
 from treelib import Tree
-import os, shutil
+import os, shutil, glob
 
 def get_struct_path(df, structure_id_path):
     """
@@ -58,7 +58,7 @@ def create_tree(struct_list):
         tree.create_node(ele['acronym'],ele['id'],parent=ele['structure_id_path'][-2])
     return tree
 
-def create_atlas(working_dir, resolution, template_path, annotation_path, 
+def create_atlas(working_dir, resolution, atlas_name, template_path, annotation_path, 
                  structure_path):
     """Function to generate source data for an atlas.
 
@@ -75,17 +75,13 @@ def create_atlas(working_dir, resolution, template_path, annotation_path,
         Path to the final compressed atlas file.
 
     """
-
-    ATLAS_NAME = "NeuN647_full"
+    
     SPECIES = "Mus musculus"
     ATLAS_LINK = "https://lifecanvastech.com"
     CITATION = "unpublished"
     ORIENTATION = "sal" #sal = transverse orientation 
     
-    if os.path.exists(working_dir):
-        shutil.rmtree(working_dir)
-        
-    os.makedirs(working_dir)
+    os.makedirs(working_dir, exist_ok=True)
 
 
     # do stuff to create the atlas
@@ -118,7 +114,7 @@ def create_atlas(working_dir, resolution, template_path, annotation_path,
     
 
     output_filename = wrapup_atlas_from_data(
-        atlas_name=ATLAS_NAME,
+        atlas_name=atlas_name,
         atlas_minor_version=__version__,
         citation=CITATION,
         atlas_link=ATLAS_LINK,
@@ -133,19 +129,22 @@ def create_atlas(working_dir, resolution, template_path, annotation_path,
         working_dir=working_dir,
         hemispheres_stack=None,
         cleanup_files=False,
-        compress=True,
+        compress=False,
     )
 
     return output_filename
 
 
 if __name__ == "__main__":
-    resolution = 10  # some resolution, in microns
-    template_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/NeuN647_10_full_transverse.tiff'
-    annotation_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/edge_annotation_10_full_transverse_LR.tiff'
-    structure_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/full_brain_regions_LR.csv'
+    resolution = 10  # atlas resolution in microns
+    atlas_name = "NeuN647_mouse_full_histnorm" # channel_species_fullorhalf
+    template_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/NeuN647_10_full_transverse_histnormalized.tiff' # template image 
+    annotation_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/annotation_10_full_transverse_LR.tiff' # annotated regions + edges
+    structure_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/full_brain_regions_LR.csv' # table corresponding regions to labels
     
-    # Generated atlas path:
-    bg_root_dir = "/home/user/.brainglobe"#"/home/user/Documents/brainreg_tests/atlases"
-
-    create_atlas(bg_root_dir, resolution, template_path, annotation_path, structure_path)
+    # Generated atlas path (don't change this - napari looks in this directory)
+    # bg_root_dir = "/home/user/.brainglobe"
+    bg_root_dir = '/mnt/beegfs/.brainglobe'
+    
+    create_atlas(bg_root_dir, resolution, atlas_name, template_path, annotation_path, structure_path)
+    

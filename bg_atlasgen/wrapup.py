@@ -215,4 +215,5 @@ def wrapup_atlas_from_data(
         # Clean temporary directory and remove it:
         shutil.rmtree(dest_dir)
 
-    return output_filename
+    # return output_filename
+    return 
