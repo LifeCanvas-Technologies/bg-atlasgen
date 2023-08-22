@@ -76,7 +76,7 @@ def create_atlas(working_dir, resolution, template_path, annotation_path,
 
     """
 
-    ATLAS_NAME = "NeuN647_10_full_transverse_histnormalized"
+    ATLAS_NAME = "NeuN647_full"
     SPECIES = "Mus musculus"
     ATLAS_LINK = "https://lifecanvastech.com"
     CITATION = "unpublished"
@@ -141,11 +141,11 @@ def create_atlas(working_dir, resolution, template_path, annotation_path,
 
 if __name__ == "__main__":
     resolution = 10  # some resolution, in microns
-    template_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/NeuN647_10_full_transverse_histnormalized.tiff'
+    template_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/NeuN647_10_full_transverse.tiff'
     annotation_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/edge_annotation_10_full_transverse_LR.tiff'
     structure_path = '/mnt/beegfs/ML_Data/Reg_Databases/atlas/full_brain_regions_LR.csv'
     
     # Generated atlas path:
-    bg_root_dir = "/home/user/Documents/brainreg_tests/atlases"
+    bg_root_dir = "/home/user/.brainglobe"#"/home/user/Documents/brainreg_tests/atlases"
 
     create_atlas(bg_root_dir, resolution, template_path, annotation_path, structure_path)
